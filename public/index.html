@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>L1 Service Desk Agent</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5; }
+    #chat { border: 1px solid #ccc; background: #fff; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px; }
+    .user { color: blue; }
+    .agent { color: green; }
+    #inputBox { width: 75%; padding: 10px; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>L1 Service Desk Agent</h2>
+  <div id="chat"></div>
+  <input type="text" id="inputBox" placeholder="Type your ticket query..." />
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("inputBox");
+      const message = input.value.trim();
+      if (!message) return;
+
+      document.getElementById("chat").innerHTML += `<p class="user"><b>You:</b> ${message}</p>`;
+      input.value = "";
+
+      const res = await fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: message })
+      });
+
+      const data = await res.json();
+      document.getElementById("chat").innerHTML += `<p class="agent"><b>Agent:</b> ${data.reply}</p>`;
+    }
+  </script>
+</body>
+</html>
